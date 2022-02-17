@@ -141,10 +141,10 @@ double NaiveBayesClassifier::zScoreCalc(features feature, double x){
 
 }
 
-double NaiveBayesClassifier::rangeProb(features feature, double x){
+double NaiveBayesClassifier::rangeProb(features feature, double x, double ceoff){
     //can change range here to test accuracy
     //2.3 seems to be best
-    return zScoreCalc(feature, x + (2.3*feature.stdVar/1)) - zScoreCalc(feature, x - (2.3*feature.stdVar/1));
+    return zScoreCalc(feature, x + (ceoff*feature.stdVar)) - zScoreCalc(feature, x - (ceoff*feature.stdVar));
 }
 
 double NaiveBayesClassifier::genderProb(genderFeature feature, string gender){
@@ -162,31 +162,43 @@ int NaiveBayesClassifier::makeGuess(double age, string gender, double height,
     double grip_force, double sit_and_bend_forward, double sit_up_count, 
     double broad_jump, int grade){
     
-    double age_y_prob = rangeProb(age_y, age);
+    double ageInt = 3.63; //4.3
+    double heightInt = 2.53; //4.8
+    double weightInt = 4.6;  //5.1
+    double fatInt = 2.7; //2.7
+    double diaInt = 2.6; //2.6
+    double sysInt = 3; //3
+    double gripInt = 2.76; //2.8
+    double sitbendInt = 2.38; //2.8
+    double situpInt = 2.29; //2.3
+    double broadInt = 2.8; //2.8
+
+    double age_y_prob = rangeProb(age_y, age, ageInt);
     double gender_y_prob = genderProb(gender_y, gender);
-    double height_y_prob = rangeProb(height_y, height);
-    double weight_y_prob = rangeProb(weight_y, weight);
-    double bodyfat_y_prob = rangeProb(bodyfat_y, bodyfat);
-    double diastolic_y_prob = rangeProb(diastolic_y, diastolic);
-    double systolic_y_prob = rangeProb(systolic_y, systolic);
-    double grip_force_y_prob = rangeProb(grip_force_y, grip_force);
-    double sit_and_bend_forward_y_prob = rangeProb(sit_and_bend_forward_y, sit_and_bend_forward);
-    double sit_up_count_y_prob = rangeProb(sit_up_count_y, sit_up_count);
-    double broad_jump_y_prob = rangeProb(broad_jump_y, broad_jump);
+    double height_y_prob = rangeProb(height_y, height, heightInt);
+    double weight_y_prob = rangeProb(weight_y, weight, weightInt);
+    double bodyfat_y_prob = rangeProb(bodyfat_y, bodyfat, fatInt);
+    double diastolic_y_prob = rangeProb(diastolic_y, diastolic, diaInt);
+    double systolic_y_prob = rangeProb(systolic_y, systolic, sysInt);
+    double grip_force_y_prob = rangeProb(grip_force_y, grip_force, gripInt);
+    double sit_and_bend_forward_y_prob = rangeProb(sit_and_bend_forward_y, sit_and_bend_forward, sitbendInt);
+    double sit_up_count_y_prob = rangeProb(sit_up_count_y, sit_up_count, situpInt);
+    double broad_jump_y_prob = rangeProb(broad_jump_y, broad_jump, broadInt);
 
     double prob_y = log2(age_y_prob) + log2(gender_y_prob) + log2(height_y_prob) + log2(weight_y_prob) + log2(bodyfat_y_prob) + log2(diastolic_y_prob) + log2(systolic_y_prob) + log2(grip_force_y_prob) + log2(sit_and_bend_forward_y_prob) + log2(sit_up_count_y_prob) + log2(broad_jump_y_prob);
     
-    double age_n_prob = rangeProb(age_n, age);
+    double age_n_prob = rangeProb(age_n, age, ageInt);
     double gender_n_prob = genderProb(gender_n, gender);
-    double height_n_prob = rangeProb(height_n, height);
-    double weight_n_prob = rangeProb(weight_n, weight);
-    double bodyfat_n_prob = rangeProb(bodyfat_n, bodyfat);
-    double diastolic_n_prob = rangeProb(diastolic_n, diastolic);
-    double systolic_n_prob = rangeProb(systolic_n, systolic);
-    double grip_force_n_prob = rangeProb(grip_force_n, grip_force);
-    double sit_and_bend_forward_n_prob = rangeProb(sit_and_bend_forward_n, sit_and_bend_forward);
-    double sit_up_count_n_prob = rangeProb(sit_up_count_n, sit_up_count);
-    double broad_jump_n_prob = rangeProb(broad_jump_n, broad_jump);
+    double height_n_prob = rangeProb(height_n, height, heightInt);
+    double weight_n_prob = rangeProb(weight_n, weight, weightInt);
+    double bodyfat_n_prob = rangeProb(bodyfat_n, bodyfat, fatInt);
+    double diastolic_n_prob = rangeProb(diastolic_n, diastolic, diaInt);
+    double systolic_n_prob = rangeProb(systolic_n, systolic, sysInt);
+    double grip_force_n_prob = rangeProb(grip_force_n, grip_force, gripInt);
+    double sit_and_bend_forward_n_prob = rangeProb(sit_and_bend_forward_n, sit_and_bend_forward, sitbendInt);
+    double sit_up_count_n_prob = rangeProb(sit_up_count_n, sit_up_count, situpInt);
+    double broad_jump_n_prob = rangeProb(broad_jump_n, broad_jump, broadInt);
+
     double prob_n = log2(age_n_prob) + log2(gender_n_prob) + log2(height_n_prob) + log2(weight_n_prob) + log2(bodyfat_n_prob) + log2(diastolic_n_prob) + log2(systolic_n_prob) + log2(grip_force_n_prob) + log2(sit_and_bend_forward_n_prob) + log2(sit_up_count_n_prob) + log2(broad_jump_n_prob);
 
     int guess = 0;
@@ -205,7 +217,21 @@ int NaiveBayesClassifier::makeGuess(double age, string gender, double height,
 }
 
 double NaiveBayesClassifier::getAccuracy(){
-    return correctGuesses/totalGuessed;
+
+    return correctGuesses/totalGuessed*100.0;
+}
+
+void NaiveBayesClassifier::setTester(double num){
+    tester = num;
+}
+
+double NaiveBayesClassifier::getTester(){
+    return tester;
+}
+
+void NaiveBayesClassifier::resetAccuracy(){
+    correctGuesses = 0.0;
+    totalGuessed = 0.0;
 }
 
 int main(int argc,char* argv[])//int argc,char* argv[]
@@ -319,7 +345,139 @@ int main(int argc,char* argv[])//int argc,char* argv[]
         
     }
     inFile2.close();
+    
+    return 0;
+}
 
+/* int main(int argc,char* argv[])//int argc,char* argv[]
+{
+    
+    NaiveBayesClassifier NBC;
+
+    ifstream inFile1;
+    inFile1.open( argv[1] );
+
+    string line;
+    
+    string num1;
+    string gender;
+    string num2; 
+    string num3; 
+    string num4; 
+    string num5;
+    string num6;
+    string num7; 
+    string num8; 
+    string num9;
+    string num10;
+    string num11;
+
+    int grade_0_flag = 1;
+    int grade_1_flag = 1;
+
+    while ( getline(inFile1,line) )
+    {
+        istringstream linestream(line);
+
+        getline(linestream, num1, ',');
+        getline(linestream, gender, ',');
+        getline(linestream, num2, ',');
+        getline(linestream, num3, ',');
+        getline(linestream, num4, ',');
+        getline(linestream, num5, ',');
+        getline(linestream, num6, ',');
+        getline(linestream, num7, ',');
+        getline(linestream, num8, ',');
+        getline(linestream, num9, ',');
+        getline(linestream, num10, ',');
+        getline(linestream, num11, ',');
+
+        double age = stod(num1);
+        double height = stod(num2);
+        double weight = stod(num3);
+        double bodyfat = stod(num4);
+        double diastolic = stod(num5);
+        double systolic = stod(num6);
+        double grip_force= stod(num7);
+        double sit_and_bend_forward = stod(num8);
+        double sit_up_count = stod(num9);
+        double broad_jump = stod(num10);
+        int grade = stoi(num11);
+
+        
+
+        if(grade == 0 && grade_0_flag == 1){
+            grade_0_flag = 0;
+            NBC.setFeatureCDF(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
+
+        }
+        else if(grade == 1 && grade_1_flag == 1){
+            grade_1_flag = 0;
+            NBC.setFeatureCDF(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
+        }
+        else{
+            NBC.updateFeatureCDF(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
+        }
+        
+    }
+    inFile1.close();
+
+    double acc = 0.0;
+    double testerNum = 0.00;
+
+    for(double i = 0.0; i <= 10.00; i=i+.01){
+
+        NBC.setTester(i);
+        
+
+        ifstream inFile2;
+        inFile2.open( argv[2] );
+
+        while ( getline(inFile2,line) )
+        {
+            istringstream linestream(line);
+
+            getline(linestream, num1, ',');
+            getline(linestream, gender, ',');
+            getline(linestream, num2, ',');
+            getline(linestream, num3, ',');
+            getline(linestream, num4, ',');
+            getline(linestream, num5, ',');
+            getline(linestream, num6, ',');
+            getline(linestream, num7, ',');
+            getline(linestream, num8, ',');
+            getline(linestream, num9, ',');
+            getline(linestream, num10, ',');
+            getline(linestream, num11, ',');
+
+            double age = stod(num1);
+            double height = stod(num2);
+            double weight = stod(num3);
+            double bodyfat = stod(num4);
+            double diastolic = stod(num5);
+            double systolic = stod(num6);
+            double grip_force= stod(num7);
+            double sit_and_bend_forward = stod(num8);
+            double sit_up_count = stod(num9);
+            double broad_jump = stod(num10);
+            int grade = stoi(num11);
+
+            int guess = NBC.makeGuess(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
+        
+        }
+        inFile2.close();
+
+        //cout<<NBC.getTester()<<" "<<NBC.getAccuracy()<<"\n";
+
+        if(NBC.getAccuracy() > acc){
+            testerNum = i;
+            acc = NBC.getAccuracy();
+        }
+
+        NBC.resetAccuracy();
+
+    }
+    cout<<"tester: "<<testerNum<<" Accuracy: "<<acc;
     /* features test = NBC.getFeature();
     NBC.printFeatureAttributes(test);
 
@@ -327,6 +485,8 @@ int main(int argc,char* argv[])//int argc,char* argv[]
     cout<<NBC.zScoreCalc(test, 166.0)<<"\n"; */
 
     //cout<<NBC.getAccuracy();
+    //NBC.getAccuracy(); */
     
-    return 0;
-}
+    //return 0;
+//}
+ 

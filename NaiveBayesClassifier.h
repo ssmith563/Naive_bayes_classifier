@@ -22,6 +22,8 @@ class NaiveBayesClassifier
     
     private:
 
+    double tester = 0.0;
+
     double correctGuesses = 0.0;
     double totalGuessed = 0.0;
 
@@ -82,7 +84,7 @@ class NaiveBayesClassifier
 
     double zScoreCalc(features feature, double x);
 
-    double rangeProb(features feature, double x);
+    double rangeProb(features feature, double x, double ceoff);
 
     double genderProb(genderFeature feature, std::string gender);
 
@@ -92,6 +94,12 @@ class NaiveBayesClassifier
     double broad_jump, int grade);
 
     double getAccuracy();
+
+    void setTester(double num);
+
+    double getTester();
+
+    void resetAccuracy();
 };
 
 #endif
