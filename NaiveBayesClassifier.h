@@ -6,21 +6,24 @@
 
 
 struct features{
-    double mean=0;
-    double oldMean=0;
-    double n=1;
-    double stdVar=0;
+    double mean=0.0;
+    double oldMean=0.0;
+    double n=1.0;
+    double stdVar=0.0;
 };
 
 struct genderFeature{
-    double n=1;
-    double males=1;
+    double n=1.0;
+    double males=0;
 };
 
 class NaiveBayesClassifier
 {
     
     private:
+
+    double correctGuesses = 0.0;
+    double totalGuessed = 0.0;
 
     features age_y;
     features age_n;
@@ -77,7 +80,18 @@ class NaiveBayesClassifier
 
     features getFeature();
 
-    
+    double zScoreCalc(features feature, double x);
+
+    double rangeProb(features feature, double x);
+
+    double genderProb(genderFeature feature, std::string gender);
+
+    int makeGuess(double age, std::string gender, double height, 
+    double weight, double bodyfat, double diastolic, double systolic, 
+    double grip_force, double sit_and_bend_forward, double sit_up_count, 
+    double broad_jump, int grade);
+
+    double getAccuracy();
 };
 
 #endif
