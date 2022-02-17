@@ -143,7 +143,8 @@ double NaiveBayesClassifier::zScoreCalc(features feature, double x){
 
 double NaiveBayesClassifier::rangeProb(features feature, double x){
     //can change range here to test accuracy
-    return zScoreCalc(feature, x + feature.stdVar/2) - zScoreCalc(feature, x - feature.stdVar/2);
+    //2.3 seems to be best
+    return zScoreCalc(feature, x + (2.3*feature.stdVar/1)) - zScoreCalc(feature, x - (2.3*feature.stdVar/1));
 }
 
 double NaiveBayesClassifier::genderProb(genderFeature feature, string gender){
@@ -162,63 +163,35 @@ int NaiveBayesClassifier::makeGuess(double age, string gender, double height,
     double broad_jump, int grade){
     
     double age_y_prob = rangeProb(age_y, age);
-    //cout<<"age: "<<age<<" age 1 prob: "<<age_y_prob<<" ";
     double gender_y_prob = genderProb(gender_y, gender);
-    //cout<<"Gender: "<<gender<<" Gender 1 prob: "<<gender_y_prob<<" ";
     double height_y_prob = rangeProb(height_y, height);
-    //cout<<height_y_prob<<" ";
     double weight_y_prob = rangeProb(weight_y, weight);
-    //cout<<weight_y_prob<<" ";
     double bodyfat_y_prob = rangeProb(bodyfat_y, bodyfat);
-    //cout<<bodyfat_y_prob<<" ";
     double diastolic_y_prob = rangeProb(diastolic_y, diastolic);
-    //cout<<diastolic_y_prob<<" ";
     double systolic_y_prob = rangeProb(systolic_y, systolic);
-    //cout<<systolic_y_prob<<" ";
     double grip_force_y_prob = rangeProb(grip_force_y, grip_force);
-    //cout<<grip_force_y_prob<<" ";
     double sit_and_bend_forward_y_prob = rangeProb(sit_and_bend_forward_y, sit_and_bend_forward);
-    //cout<<sit_and_bend_forward_y_prob<<" ";
     double sit_up_count_y_prob = rangeProb(sit_up_count_y, sit_up_count);
-    //cout<<sit_up_count_y_prob<<" ";
     double broad_jump_y_prob = rangeProb(broad_jump_y, broad_jump);
-    //cout<<broad_jump_y_prob<<" ";
 
     double prob_y = log2(age_y_prob) + log2(gender_y_prob) + log2(height_y_prob) + log2(weight_y_prob) + log2(bodyfat_y_prob) + log2(diastolic_y_prob) + log2(systolic_y_prob) + log2(grip_force_y_prob) + log2(sit_and_bend_forward_y_prob) + log2(sit_up_count_y_prob) + log2(broad_jump_y_prob);
     
     double age_n_prob = rangeProb(age_n, age);
-    //cout<<"age: "<<age<<" age 1 prob: "<<age_n_prob<<" ";
     double gender_n_prob = genderProb(gender_n, gender);
-    //cout<<"Gender: "<<gender<<" Gender 0 prob: "<<gender_n_prob<<" ";
     double height_n_prob = rangeProb(height_n, height);
-    //cout<<height_n_prob<<" ";
     double weight_n_prob = rangeProb(weight_n, weight);
-    //cout<<weight_n_prob<<" ";
     double bodyfat_n_prob = rangeProb(bodyfat_n, bodyfat);
-    //cout<<bodyfat_n_prob<<" ";
     double diastolic_n_prob = rangeProb(diastolic_n, diastolic);
-    //cout<<diastolic_n_prob<<" ";
     double systolic_n_prob = rangeProb(systolic_n, systolic);
-    //cout<<systolic_n_prob<<" ";
     double grip_force_n_prob = rangeProb(grip_force_n, grip_force);
-    //cout<<grip_force_n_prob<<" ";
     double sit_and_bend_forward_n_prob = rangeProb(sit_and_bend_forward_n, sit_and_bend_forward);
-    //cout<<sit_and_bend_forward_n_prob<<" ";
     double sit_up_count_n_prob = rangeProb(sit_up_count_n, sit_up_count);
-    //cout<<sit_up_count_n_prob<<" ";
     double broad_jump_n_prob = rangeProb(broad_jump_n, broad_jump);
-    //cout<<broad_jump_n_prob<<" ";
-
-    //cout<<"\n";
     double prob_n = log2(age_n_prob) + log2(gender_n_prob) + log2(height_n_prob) + log2(weight_n_prob) + log2(bodyfat_n_prob) + log2(diastolic_n_prob) + log2(systolic_n_prob) + log2(grip_force_n_prob) + log2(sit_and_bend_forward_n_prob) + log2(sit_up_count_n_prob) + log2(broad_jump_n_prob);
 
     int guess = 0;
 
-    /* cout<<" age 1 prob: "<<height_y_prob<<" ";
-    cout<<"\n";
-    cout<<" age 2 prob: "<<height_n_prob<<" ";
-    cout<<"\n\n"; */
-    //cout<<prob_y<<" "<<prob_n<<"\n";
+    
     if(prob_y > prob_n){
         guess = 1;
     }
@@ -232,7 +205,6 @@ int NaiveBayesClassifier::makeGuess(double age, string gender, double height,
 }
 
 double NaiveBayesClassifier::getAccuracy(){
-    //cout<<gender_y.males<<" "<<gender_y.n<<"\n"<<gender_n.males<<" "<<gender_n.n<<"\n";
     return correctGuesses/totalGuessed;
 }
 
@@ -343,7 +315,7 @@ int main(int argc,char* argv[])//int argc,char* argv[]
         int grade = stoi(num11);
 
         int guess = NBC.makeGuess(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
-        //cout<<guess<<"\n";
+        cout<<guess<<"\n";
         
     }
     inFile2.close();
@@ -354,7 +326,7 @@ int main(int argc,char* argv[])//int argc,char* argv[]
     cout<<"z score: "<<((166.0 - test.mean)/test.stdVar)<<"\n";
     cout<<NBC.zScoreCalc(test, 166.0)<<"\n"; */
 
-    cout<<NBC.getAccuracy();
+    //cout<<NBC.getAccuracy();
     
     return 0;
 }
