@@ -1,18 +1,18 @@
-#ifndef GRAPHGENERATOR_H
-#define GRAPHGENERATOR_H
+#ifndef NAIVEBAYESCLASSIFIER_H
+#define NAIVEBAYESCLASSIFIER_H
 
 #include <string>
 #include <vector>
 
 
-class GraphGenerator
+class NaiveBayesClassifier
 {
     
     private:
 
     public:
 
-    GraphGenerator();
+    NaiveBayesClassifier();
 
     
 };

@@ -1,3 +1,3 @@
-g++ -o NaiveBayesClassifier.cpp
+g++ NaiveBayesClassifier.cpp -o a.out
  ./a.out $@
  
