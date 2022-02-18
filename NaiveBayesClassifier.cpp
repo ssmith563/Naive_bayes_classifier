@@ -185,8 +185,9 @@ int NaiveBayesClassifier::makeGuess(double age, string gender, double height,
     double sit_up_count_y_prob = rangeProb(sit_up_count_y, sit_up_count, situpInt);
     double broad_jump_y_prob = rangeProb(broad_jump_y, broad_jump, broadInt);
 
-    double prob_y = log2(age_y_prob) + log2(gender_y_prob) + log2(height_y_prob) + log2(weight_y_prob) + log2(bodyfat_y_prob) + log2(diastolic_y_prob) + log2(systolic_y_prob) + log2(grip_force_y_prob) + log2(sit_and_bend_forward_y_prob) + log2(sit_up_count_y_prob) + log2(broad_jump_y_prob);
-    
+    double prob_y = .11*log2(age_y_prob) + .7*log2(gender_y_prob) + .08*log2(height_y_prob) + 1.73*log2(weight_y_prob) + .98*log2(bodyfat_y_prob) + .31*log2(diastolic_y_prob) + 1.09*log2(systolic_y_prob) + 1.12*log2(grip_force_y_prob) + 1*log2(sit_and_bend_forward_y_prob) + 1*log2(sit_up_count_y_prob) + .93*log2(broad_jump_y_prob);
+    //                                      .7                          .08                     1.73                        .98                     .31                             1.09                        1.12                            1                                   1                               .93
+    //               .11                    .78                         .11                     1.39                        1                       .94                             .98                         .97                             1                                   1                               .95   
     double age_n_prob = rangeProb(age_n, age, ageInt);
     double gender_n_prob = genderProb(gender_n, gender);
     double height_n_prob = rangeProb(height_n, height, heightInt);
@@ -199,7 +200,9 @@ int NaiveBayesClassifier::makeGuess(double age, string gender, double height,
     double sit_up_count_n_prob = rangeProb(sit_up_count_n, sit_up_count, situpInt);
     double broad_jump_n_prob = rangeProb(broad_jump_n, broad_jump, broadInt);
 
-    double prob_n = log2(age_n_prob) + log2(gender_n_prob) + log2(height_n_prob) + log2(weight_n_prob) + log2(bodyfat_n_prob) + log2(diastolic_n_prob) + log2(systolic_n_prob) + log2(grip_force_n_prob) + log2(sit_and_bend_forward_n_prob) + log2(sit_up_count_n_prob) + log2(broad_jump_n_prob);
+    double prob_n = 1.6*log2(age_n_prob) + .76*log2(gender_n_prob) + .23*log2(height_n_prob) + 0*log2(weight_n_prob) + 1.02*log2(bodyfat_n_prob) + .94*log2(diastolic_n_prob) + .97*log2(systolic_n_prob) + .96*log2(grip_force_n_prob) + 1*log2(sit_and_bend_forward_n_prob) + 1*log2(sit_up_count_n_prob) + 1.05*log2(broad_jump_n_prob);
+    //              
+    //               .11                    .78                         .11                     1.39                        1                       .94                             .98                         .97                             1                                   1                               .95   
 
     int guess = 0;
 
@@ -311,127 +314,10 @@ int main(int argc,char* argv[])//int argc,char* argv[]
     ifstream inFile2;
     inFile2.open( argv[2] );
 
-    while ( getline(inFile2,line) )
-    {
-        istringstream linestream(line);
 
-        getline(linestream, num1, ',');
-        getline(linestream, gender, ',');
-        getline(linestream, num2, ',');
-        getline(linestream, num3, ',');
-        getline(linestream, num4, ',');
-        getline(linestream, num5, ',');
-        getline(linestream, num6, ',');
-        getline(linestream, num7, ',');
-        getline(linestream, num8, ',');
-        getline(linestream, num9, ',');
-        getline(linestream, num10, ',');
-        getline(linestream, num11, ',');
-
-        double age = stod(num1);
-        double height = stod(num2);
-        double weight = stod(num3);
-        double bodyfat = stod(num4);
-        double diastolic = stod(num5);
-        double systolic = stod(num6);
-        double grip_force= stod(num7);
-        double sit_and_bend_forward = stod(num8);
-        double sit_up_count = stod(num9);
-        double broad_jump = stod(num10);
-        int grade = stoi(num11);
-
-        int guess = NBC.makeGuess(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
-        cout<<guess<<"\n";
-        
-    }
-    inFile2.close();
-    
-    return 0;
-}
-
-/* int main(int argc,char* argv[])//int argc,char* argv[]
-{
-    
-    NaiveBayesClassifier NBC;
-
-    ifstream inFile1;
-    inFile1.open( argv[1] );
-
-    string line;
-    
-    string num1;
-    string gender;
-    string num2; 
-    string num3; 
-    string num4; 
-    string num5;
-    string num6;
-    string num7; 
-    string num8; 
-    string num9;
-    string num10;
-    string num11;
-
-    int grade_0_flag = 1;
-    int grade_1_flag = 1;
-
-    while ( getline(inFile1,line) )
-    {
-        istringstream linestream(line);
-
-        getline(linestream, num1, ',');
-        getline(linestream, gender, ',');
-        getline(linestream, num2, ',');
-        getline(linestream, num3, ',');
-        getline(linestream, num4, ',');
-        getline(linestream, num5, ',');
-        getline(linestream, num6, ',');
-        getline(linestream, num7, ',');
-        getline(linestream, num8, ',');
-        getline(linestream, num9, ',');
-        getline(linestream, num10, ',');
-        getline(linestream, num11, ',');
-
-        double age = stod(num1);
-        double height = stod(num2);
-        double weight = stod(num3);
-        double bodyfat = stod(num4);
-        double diastolic = stod(num5);
-        double systolic = stod(num6);
-        double grip_force= stod(num7);
-        double sit_and_bend_forward = stod(num8);
-        double sit_up_count = stod(num9);
-        double broad_jump = stod(num10);
-        int grade = stoi(num11);
-
-        
-
-        if(grade == 0 && grade_0_flag == 1){
-            grade_0_flag = 0;
-            NBC.setFeatureCDF(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
-
-        }
-        else if(grade == 1 && grade_1_flag == 1){
-            grade_1_flag = 0;
-            NBC.setFeatureCDF(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
-        }
-        else{
-            NBC.updateFeatureCDF(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
-        }
-        
-    }
-    inFile1.close();
-
-    double acc = 0.0;
-    double testerNum = 0.00;
-
-    for(double i = 0.0; i <= 10.00; i=i+.01){
-
-        NBC.setTester(i);
-        
-
-        ifstream inFile2;
-        inFile2.open( argv[2] );
+    //change to true if testing
+    bool isTest = false;
+    if(!isTest){
 
         while ( getline(inFile2,line) )
         {
@@ -463,30 +349,69 @@ int main(int argc,char* argv[])//int argc,char* argv[]
             int grade = stoi(num11);
 
             int guess = NBC.makeGuess(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
+            cout<<guess<<"\n";
         
         }
         inFile2.close();
-
-        //cout<<NBC.getTester()<<" "<<NBC.getAccuracy()<<"\n";
-
-        if(NBC.getAccuracy() > acc){
-            testerNum = i;
-            acc = NBC.getAccuracy();
-        }
-
-        NBC.resetAccuracy();
-
     }
-    cout<<"tester: "<<testerNum<<" Accuracy: "<<acc;
-    /* features test = NBC.getFeature();
-    NBC.printFeatureAttributes(test);
+    else{
+        double acc = 0.0;
+        double testerNum = 0.00;
 
-    cout<<"z score: "<<((166.0 - test.mean)/test.stdVar)<<"\n";
-    cout<<NBC.zScoreCalc(test, 166.0)<<"\n"; */
+        for(double i = 0.0; i <= 2.00; i=i+.01){
 
-    //cout<<NBC.getAccuracy();
-    //NBC.getAccuracy(); */
-    
-    //return 0;
-//}
- 
+            NBC.setTester(i);
+        
+
+            ifstream inFile2;
+            inFile2.open( argv[2] );
+
+            while ( getline(inFile2,line) )
+            {
+                istringstream linestream(line);
+
+                getline(linestream, num1, ',');
+                getline(linestream, gender, ',');
+                getline(linestream, num2, ',');
+                getline(linestream, num3, ',');
+                getline(linestream, num4, ',');
+                getline(linestream, num5, ',');
+                getline(linestream, num6, ',');
+                getline(linestream, num7, ',');
+                getline(linestream, num8, ',');
+                getline(linestream, num9, ',');
+                getline(linestream, num10, ',');
+                getline(linestream, num11, ',');
+
+                double age = stod(num1);
+                double height = stod(num2);
+                double weight = stod(num3);
+                double bodyfat = stod(num4);
+                double diastolic = stod(num5);
+                double systolic = stod(num6);
+                double grip_force= stod(num7);
+                double sit_and_bend_forward = stod(num8);
+                double sit_up_count = stod(num9);
+                double broad_jump = stod(num10);
+                int grade = stoi(num11);
+
+                int guess = NBC.makeGuess(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
+        
+            }
+            inFile2.close();
+
+            //cout<<NBC.getTester()<<" "<<NBC.getAccuracy()<<"\n";
+
+            if(NBC.getAccuracy() > acc){
+                testerNum = i;
+                acc = NBC.getAccuracy();
+            }
+
+            NBC.resetAccuracy();
+
+        }
+        cout<<"tester: "<<testerNum<<" Accuracy: "<<acc;
+    }
+    return 0;
+}
+
