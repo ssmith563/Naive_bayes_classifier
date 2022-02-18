@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+//#include <chrono>
 
 using namespace std;
 
@@ -266,6 +267,8 @@ void NaiveBayesClassifier::resetAccuracy(){
 int main(int argc,char* argv[])//int argc,char* argv[]
 {
 
+    //auto start = chrono::steady_clock::now();
+
     NaiveBayesClassifier NBC;
 
     ifstream inFile1;
@@ -336,6 +339,13 @@ int main(int argc,char* argv[])//int argc,char* argv[]
     }
     inFile1.close();
 
+    //auto end = chrono::steady_clock::now();
+
+    /* cout << "Elapsed time for training in milliseconds: "
+        << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+        << " ms\n"; */
+
+    //start = chrono::steady_clock::now();
 
     ifstream inFile2;
     inFile2.open( argv[2] );
@@ -439,6 +449,15 @@ int main(int argc,char* argv[])//int argc,char* argv[]
         cout<<"Tester: "<<testerNum<<" Accuracy: "<<acc<<"\n";
         
     }
+
+    //end = chrono::steady_clock::now();
+
+    /* cout << "Elapsed time for testing in milliseconds: "
+        << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+        << " ms\n";
+
+    cout<<"Accuracy: "<<NBC.getAccuracy()<<"\n"; */
+
     return 0;
 }
 
