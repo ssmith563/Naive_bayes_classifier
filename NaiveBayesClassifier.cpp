@@ -162,16 +162,16 @@ int NaiveBayesClassifier::makeGuess(double age, string gender, double height,
     double grip_force, double sit_and_bend_forward, double sit_up_count, 
     double broad_jump, int grade){
     
-    double ageInt = 3.63; //4.3
-    double heightInt = 2.53; //4.8
-    double weightInt = 4.6;  //5.1
-    double fatInt = 2.7; //2.7
-    double diaInt = 2.6; //2.6
-    double sysInt = 3; //3
-    double gripInt = 2.76; //2.8
-    double sitbendInt = 2.38; //2.8
-    double situpInt = 2.29; //2.3
-    double broadInt = 2.8; //2.8
+    double ageInt = 3.63; 
+    double heightInt = 2.53; 
+    double weightInt = 4.6;  
+    double fatInt = 2.7; 
+    double diaInt = 2.6; 
+    double sysInt = 3; 
+    double gripInt = 2.76; 
+    double sitbendInt = 2.38; 
+    double situpInt = 2.29; 
+    double broadInt = 2.8; 
 
     double age_y_prob = rangeProb(age_y, age, ageInt);
     double gender_y_prob = genderProb(gender_y, gender);
@@ -185,9 +185,6 @@ int NaiveBayesClassifier::makeGuess(double age, string gender, double height,
     double sit_up_count_y_prob = rangeProb(sit_up_count_y, sit_up_count, situpInt);
     double broad_jump_y_prob = rangeProb(broad_jump_y, broad_jump, broadInt);
 
-    double prob_y = .11*log2(age_y_prob) + .7*log2(gender_y_prob) + .08*log2(height_y_prob) + 1.73*log2(weight_y_prob) + .98*log2(bodyfat_y_prob) + .31*log2(diastolic_y_prob) + 1.09*log2(systolic_y_prob) + 1.12*log2(grip_force_y_prob) + 1*log2(sit_and_bend_forward_y_prob) + 1*log2(sit_up_count_y_prob) + .93*log2(broad_jump_y_prob);
-    //                                      .7                          .08                     1.73                        .98                     .31                             1.09                        1.12                            1                                   1                               .93
-    //               .11                    .78                         .11                     1.39                        1                       .94                             .98                         .97                             1                                   1                               .95   
     double age_n_prob = rangeProb(age_n, age, ageInt);
     double gender_n_prob = genderProb(gender_n, gender);
     double height_n_prob = rangeProb(height_n, height, heightInt);
@@ -200,7 +197,36 @@ int NaiveBayesClassifier::makeGuess(double age, string gender, double height,
     double sit_up_count_n_prob = rangeProb(sit_up_count_n, sit_up_count, situpInt);
     double broad_jump_n_prob = rangeProb(broad_jump_n, broad_jump, broadInt);
 
-    double prob_n = 1.6*log2(age_n_prob) + .76*log2(gender_n_prob) + .23*log2(height_n_prob) + 0*log2(weight_n_prob) + 1.02*log2(bodyfat_n_prob) + .94*log2(diastolic_n_prob) + .97*log2(systolic_n_prob) + .96*log2(grip_force_n_prob) + 1*log2(sit_and_bend_forward_n_prob) + 1*log2(sit_up_count_n_prob) + 1.05*log2(broad_jump_n_prob);
+
+    double num1 = 0;
+    double num2 = 0.7;
+    double num3 = 0.08;
+    double num4 = 1.73;
+    double num5 = 0.98;
+    double num6 = 0.31;
+    double num7 = 1.09;
+    double num8 = 1.12;
+    double num9 = 1;
+    double num10 = 1;
+    double num11 = .93;
+
+    double num12 = 1.6;
+    double num13 = .76;
+    double num14 = .23;
+    double num15 = 0;
+    double num16 = 1.02;
+    double num17 = .94;
+    double num18 = .97;
+    double num19 = 0.96;
+    double num20 = 1;
+    double num21 = 1;
+    double num22 = 1.05;
+
+    double prob_y = num1*log2(age_y_prob) + num2*log2(gender_y_prob) + num3*log2(height_y_prob) + num4*log2(weight_y_prob) + num5*log2(bodyfat_y_prob) + num6*log2(diastolic_y_prob) + num7*log2(systolic_y_prob) + num8*log2(grip_force_y_prob) + num9*log2(sit_and_bend_forward_y_prob) + num10*log2(sit_up_count_y_prob) + num11*log2(broad_jump_y_prob);
+    //                                      .7                          .08                     1.73                        .98                     .31                             1.09                        1.12                            1                                   1                               .93
+    //               .11                    .78                         .11                     1.39                        1                       .94                             .98                         .97                             1                                   1                               .95   
+    
+    double prob_n = num12*log2(age_n_prob) + num13*log2(gender_n_prob) + num14*log2(height_n_prob) + num15*log2(weight_n_prob) + num16*log2(bodyfat_n_prob) + num17*log2(diastolic_n_prob) + num18*log2(systolic_n_prob) + num19*log2(grip_force_n_prob) + num20*log2(sit_and_bend_forward_n_prob) + num21*log2(sit_up_count_n_prob) + num22*log2(broad_jump_n_prob);
     //              
     //               .11                    .78                         .11                     1.39                        1                       .94                             .98                         .97                             1                                   1                               .95   
 
@@ -358,7 +384,7 @@ int main(int argc,char* argv[])//int argc,char* argv[]
         double acc = 0.0;
         double testerNum = 0.00;
 
-        for(double i = 0.0; i <= 2.00; i=i+.01){
+        for(double i = 0.0; i <= 10.00; i=i+.01){
 
             NBC.setTester(i);
         
@@ -410,7 +436,8 @@ int main(int argc,char* argv[])//int argc,char* argv[]
             NBC.resetAccuracy();
 
         }
-        cout<<"tester: "<<testerNum<<" Accuracy: "<<acc;
+        cout<<"Tester: "<<testerNum<<" Accuracy: "<<acc<<"\n";
+        
     }
     return 0;
 }
