@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-
 struct features{
     double mean=0.0;
     double oldMean=0.0;
@@ -19,11 +18,9 @@ struct genderFeature{
 
 class NaiveBayesClassifier
 {
-    
     private:
 
     double tester = 0.0;
-
     double correctGuesses = 0.0;
     double totalGuessed = 0.0;
 

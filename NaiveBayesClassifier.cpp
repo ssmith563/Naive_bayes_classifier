@@ -10,16 +10,15 @@
 using namespace std;
 
 NaiveBayesClassifier::NaiveBayesClassifier(){
-    
 }
 
+//calls function for each feature to update its mean and std. var
 void NaiveBayesClassifier::updateFeatureCDF(double age, string gender, double height, 
     double weight, double bodyfat, double diastolic, double systolic, 
     double grip_force, double sit_and_bend_forward, double sit_up_count, 
     double broad_jump, int grade){
 
-    
-
+    //updates each individual feature based on grade
     if(grade == 1){
         updateFeatureUtil(&age_y, age);
         updateGenderUtil(&gender_y, gender);
@@ -46,14 +45,15 @@ void NaiveBayesClassifier::updateFeatureCDF(double age, string gender, double he
         updateFeatureUtil(&sit_up_count_n, sit_up_count);
         updateFeatureUtil(&broad_jump_n, broad_jump);
     }
-
 }
 
+//sets the feature values means to be the initial values for each feature
 void NaiveBayesClassifier::setFeatureCDF(double age, string gender, double height, 
     double weight, double bodyfat, double diastolic, double systolic, 
     double grip_force, double sit_and_bend_forward, double sit_up_count, 
     double broad_jump, int grade){
 
+    //initializes mean values for grade = 1 and 0
     if(grade == 1){
         age_y.mean = age;
 
@@ -107,17 +107,17 @@ void NaiveBayesClassifier::setFeatureCDF(double age, string gender, double heigh
 
 }
 
+//uses equation to calculate updated mean and std. var
 void NaiveBayesClassifier::updateFeatureUtil(features *feature, double x){
-    
     feature->n = feature->n+1;
-    
     feature->oldMean = feature->mean;
-
+    //calculates a new mean from an old mean and new value
     feature->mean = ((feature->mean * (feature->n-1))+x)/feature->n;
-
+    //calculates a new standard variation from old standard variation and mean
     feature->stdVar = sqrt( ( (feature->n-2)*feature->stdVar*feature->stdVar + (x - feature->mean)*(x - feature->oldMean) )/(feature->n-1));
 }
 
+//updates gender mean
 void NaiveBayesClassifier::updateGenderUtil(genderFeature *gender, string genderValue){
     gender->n = gender->n+1.0;
     if(genderValue == "M"){
@@ -125,6 +125,7 @@ void NaiveBayesClassifier::updateGenderUtil(genderFeature *gender, string gender
     }
 }
 
+//prints a features mean, number of athletes, and standard variation
 void NaiveBayesClassifier::printFeatureAttributes(features feature){
     cout<<"Mean: "<<feature.mean<<"\n";
     cout<<"N: "<<feature.n<<"\n";
@@ -135,19 +136,21 @@ features NaiveBayesClassifier::getFeature(){
     return height_n;
 }
 
+//calculate zscore from mean and std. var
 double NaiveBayesClassifier::zScoreCalc(features feature, double x){
     double zscore = (x - feature.mean)/feature.stdVar;
 
     return 0.5 * erfc(-zscore * M_SQRT1_2);
-
 }
 
+//calculates probability of being within the range
 double NaiveBayesClassifier::rangeProb(features feature, double x, double ceoff){
     //can change range here to test accuracy
     //2.3 seems to be best
     return zScoreCalc(feature, x + (ceoff*feature.stdVar)) - zScoreCalc(feature, x - (ceoff*feature.stdVar));
 }
 
+//calculates probability of gender
 double NaiveBayesClassifier::genderProb(genderFeature feature, string gender){
     
     if(gender == "M"){
@@ -158,11 +161,13 @@ double NaiveBayesClassifier::genderProb(genderFeature feature, string gender){
     }
 }
 
+
 int NaiveBayesClassifier::makeGuess(double age, string gender, double height, 
     double weight, double bodyfat, double diastolic, double systolic, 
     double grip_force, double sit_and_bend_forward, double sit_up_count, 
     double broad_jump, int grade){
     
+    //calculated weights from multiple tests
     double ageInt = 3.63; 
     double heightInt = 2.53; 
     double weightInt = 4.6;  
@@ -174,6 +179,7 @@ int NaiveBayesClassifier::makeGuess(double age, string gender, double height,
     double situpInt = 2.29; 
     double broadInt = 2.8; 
 
+    //calculates probability for each feature
     double age_y_prob = rangeProb(age_y, age, ageInt);
     double gender_y_prob = genderProb(gender_y, gender);
     double height_y_prob = rangeProb(height_y, height, heightInt);
@@ -198,7 +204,8 @@ int NaiveBayesClassifier::makeGuess(double age, string gender, double height,
     double sit_up_count_n_prob = rangeProb(sit_up_count_n, sit_up_count, situpInt);
     double broad_jump_n_prob = rangeProb(broad_jump_n, broad_jump, broadInt);
 
-
+    //weights for each value when calculating grade probability
+    //calculated by setting each = tester and finding best accuracy
     double num1 = 0;
     double num2 = 0.7;
     double num3 = 0.08;
@@ -223,14 +230,11 @@ int NaiveBayesClassifier::makeGuess(double age, string gender, double height,
     double num21 = 1;
     double num22 = 1.05;
 
+    //calculates probability of grade = 1 with weights calculated from repeated testing
     double prob_y = num1*log2(age_y_prob) + num2*log2(gender_y_prob) + num3*log2(height_y_prob) + num4*log2(weight_y_prob) + num5*log2(bodyfat_y_prob) + num6*log2(diastolic_y_prob) + num7*log2(systolic_y_prob) + num8*log2(grip_force_y_prob) + num9*log2(sit_and_bend_forward_y_prob) + num10*log2(sit_up_count_y_prob) + num11*log2(broad_jump_y_prob);
-    //                                      .7                          .08                     1.73                        .98                     .31                             1.09                        1.12                            1                                   1                               .93
-    //               .11                    .78                         .11                     1.39                        1                       .94                             .98                         .97                             1                                   1                               .95   
-    
+    //calculates probability of grade = 0 with weights calculated from repeated testing
     double prob_n = num12*log2(age_n_prob) + num13*log2(gender_n_prob) + num14*log2(height_n_prob) + num15*log2(weight_n_prob) + num16*log2(bodyfat_n_prob) + num17*log2(diastolic_n_prob) + num18*log2(systolic_n_prob) + num19*log2(grip_force_n_prob) + num20*log2(sit_and_bend_forward_n_prob) + num21*log2(sit_up_count_n_prob) + num22*log2(broad_jump_n_prob);
-    //              
-    //               .11                    .78                         .11                     1.39                        1                       .94                             .98                         .97                             1                                   1                               .95   
-
+    
     int guess = 0;
 
     
@@ -264,7 +268,7 @@ void NaiveBayesClassifier::resetAccuracy(){
     totalGuessed = 0.0;
 }
 
-int main(int argc,char* argv[])//int argc,char* argv[]
+int main(int argc,char* argv[])
 {
 
     //auto start = chrono::steady_clock::now();
@@ -291,7 +295,8 @@ int main(int argc,char* argv[])//int argc,char* argv[]
 
     int grade_0_flag = 1;
     int grade_1_flag = 1;
-
+    
+    //read in lines from training file
     while ( getline(inFile1,line) )
     {
         istringstream linestream(line);
@@ -322,17 +327,16 @@ int main(int argc,char* argv[])//int argc,char* argv[]
         int grade = stoi(num11);
 
         
-
+        //inititializes CDF for when athlete grade = 0 and 1
         if(grade == 0 && grade_0_flag == 1){
             grade_0_flag = 0;
             NBC.setFeatureCDF(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
-
         }
         else if(grade == 1 && grade_1_flag == 1){
             grade_1_flag = 0;
             NBC.setFeatureCDF(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
         }
-        else{
+        else{//updates CDF after already created
             NBC.updateFeatureCDF(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
         }
         
@@ -354,7 +358,7 @@ int main(int argc,char* argv[])//int argc,char* argv[]
     //change to true if testing
     bool isTest = false;
     if(!isTest){
-
+        //reads every line of testing file
         while ( getline(inFile2,line) )
         {
             istringstream linestream(line);
@@ -383,22 +387,24 @@ int main(int argc,char* argv[])//int argc,char* argv[]
             double sit_up_count = stod(num9);
             double broad_jump = stod(num10);
             int grade = stoi(num11);
-
+            
             int guess = NBC.makeGuess(age, gender, height, weight, bodyfat, diastolic, systolic, grip_force, sit_and_bend_forward, sit_up_count, broad_jump, grade);
             cout<<guess<<"\n";
         
         }
         inFile2.close();
     }
+    //runs test repeatedly to test how each weight affects the accuracy and finds the best weights
+    //must be run multiple times with tester variable inputed into a single weight to test the best weight
     else{
         double acc = 0.0;
         double testerNum = 0.00;
 
         for(double i = 0.0; i <= 10.00; i=i+.01){
 
+            //sets tester value for weight
             NBC.setTester(i);
         
-
             ifstream inFile2;
             inFile2.open( argv[2] );
 
